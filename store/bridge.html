@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>DailyCheck store artwork bridge</title>
+<p>Temporary helper used to hand the App Store screenshots to App Store Connect.</p>
+<script>
+window.addEventListener('message', async (event) => {
+  if (!event.data || event.data.type !== 'dc-get-file') return;
+  try {
+    const buf = await (await fetch('./' + event.data.name, {cache: 'no-store'})).arrayBuffer();
+    event.source.postMessage({type: 'dc-file', name: event.data.name, buf}, event.origin, [buf]);
+  } catch (e) {
+    event.source.postMessage({type: 'dc-file-error', name: event.data.name, error: String(e)}, event.origin);
+  }
+});
+</script>
